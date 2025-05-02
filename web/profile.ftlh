@@ -3,11 +3,7 @@
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>User Registration
 	</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></head>
-<body>[#ftl output_format="HTML"]
-
-
-
-
+<body>
 
   
 	
@@ -57,7 +53,7 @@
 		  </div>
 		  <div class="form-group">
 			<label class="form-label">Password: <span class="required">*</span></label>
-			<input type="password" id="userPassword" name="userPassword" minlength="6" pattern="^(?=.*[!@#$%^&amp;*])(?=.*[A-Za-z0-9]).{6,}$" required="" placeholder="Choose a strong password" class="form-control" title="Password must be at least 6 characters long and contain at least one special character (!@#$%^&amp;*)">
+			<input type="password" id="userPassword" name="userPassword" minlength="6" pattern="^(?=.*[!@#$%^&amp;*])(?=.*[A-Za-z0-9]).{6,}$" required="" placeholder="Choose a strong password" title="Password must be at least 6 characters long and contain at least one special character (!@#$%^&amp;*)" class="form-control">
 		  </div>
 		  <div class="form-group">
 			<label class="form-label">Repeat Password: <span class="required">*</span></label>
@@ -68,7 +64,7 @@
 		  <div class="buttons">
 			<button type="submit" class="btn btn-primary">Register</button>
 			<button type="reset" id="cancel" name="cancel" value="cancel" class="btn btn-primary">Reset</button>
-			<button type="submit" class="btn btn-link">Udate User</button>
+			<button type="submit" class="btn btn-link" onclick="window.location.href='updateUser.ftlh'">Udate User</button>
 		  </div>
 		</form>
 	  </div>
@@ -76,9 +72,6 @@
   
   
   
-
-
-
 </body>
 <style>
 	body {
@@ -164,19 +157,18 @@
 	  background-color: #0056b3;
 	}
 	.btn-link {
-		background: none;
-		border: none;
-		color: #6c757d;
-		text-decoration: underline;
-		cursor: pointer;
-		padding: 0;
-		font: inherit;
+	  background: none;
+	  border: none;
+	  color: #6c757d;
+	  text-decoration: underline;
+	  cursor: pointer;
+	  padding: 0;
+	  font: inherit;
 	}
-
 	.btn-link:hover {
-		color: #5a6268;
-		text-decoration: none;
-		}
+	  color: #5a6268;
+	  text-decoration: none;
+	}
 	.login-link {
 	  text-align: center;
 	  margin-top: 10px;
