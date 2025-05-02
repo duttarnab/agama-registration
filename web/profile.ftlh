@@ -3,7 +3,11 @@
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>User Registration
 	</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></head>
-<body>
+<body>[#ftl output_format="HTML"]
+
+
+
+
 
   
 	
@@ -64,6 +68,7 @@
 		  <div class="buttons">
 			<button type="submit" class="btn btn-primary">Register</button>
 			<button type="reset" id="cancel" name="cancel" value="cancel" class="btn btn-primary">Reset</button>
+			<button type="submit" class="btn btn-link">Udate User</button>
 		  </div>
 		</form>
 	  </div>
@@ -71,6 +76,9 @@
   
   
   
+
+
+
 </body>
 <style>
 	body {
@@ -155,13 +163,20 @@
 	.btn-primary:hover {
 	  background-color: #0056b3;
 	}
-	.btn-secondary {
-	  background-color: #6c757d;
-	  color: white;
+	.btn-link {
+		background: none;
+		border: none;
+		color: #6c757d;
+		text-decoration: underline;
+		cursor: pointer;
+		padding: 0;
+		font: inherit;
 	}
-	.btn-secondary:hover {
-	  background-color: #5a6268;
-	}
+
+	.btn-link:hover {
+		color: #5a6268;
+		text-decoration: none;
+		}
 	.login-link {
 	  text-align: center;
 	  margin-top: 10px;
