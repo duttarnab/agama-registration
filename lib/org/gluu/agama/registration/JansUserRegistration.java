@@ -25,6 +25,7 @@ public class JansUserRegistration extends UserRegistration {
     private static final String UID = "uid";
     private static final String DISPLAY_NAME = "displayName";
     private static final String GIVEN_NAME = "givenName";
+    private static final String LAST_NAME = "sn";
     private static final String PASSWORD = "userPassword";
     private static final String INUM_ATTR = "inum";
     private static final String EXT_ATTR = "jansExtUid";
@@ -98,6 +99,9 @@ public class JansUserRegistration extends UserRegistration {
             String inum = getSingleValuedAttr(user, INUM_ATTR);
             String name = getSingleValuedAttr(user, GIVEN_NAME);
             String uid = getSingleValuedAttr(user, UID); // Define uid properly
+            String displayName = getSingleValuedAttr(user, DISPLAY_NAME);
+            String givenName = getSingleValuedAttr(user, GIVEN_NAME);
+            String sn = getSingleValuedAttr(user, LAST_NAME);
     
             if (name == null) {
                 name = getSingleValuedAttr(user, DISPLAY_NAME);
@@ -111,6 +115,8 @@ public class JansUserRegistration extends UserRegistration {
             userMap.put(INUM_ATTR, inum);
             userMap.put("name", name);
             userMap.put("email", email);
+            userMap.put(DISPLAY_NAME, displayName);
+            userMap.put(LAST_NAME, sn);
     
             return userMap;
         }
@@ -140,6 +146,64 @@ public class JansUserRegistration extends UserRegistration {
         return getSingleValuedAttr(user, INUM_ATTR);
     } 
 
+    public String updateUser(Map<String, String> profile) throws Exception {
+        Set<String> attributes = Set.of("uid", "mail", "displayName","givenName", "sn", "userPassword");
+        User user = getUser(INUM_ATTR,  profile.get(INUM_ATTR));
+    
+        attributes.forEach(attr -> {
+            String val = profile.get(attr);
+            if (StringHelper.isNotEmpty(val)) {
+                user.setAttribute(attr, val);      
+            }
+        });
+
+        UserService userService = CdiUtil.bean(UserService.class);
+        user = userService.updateUser(user); // Set user status active
+    
+        if (user == null) {
+            throw new EntryNotFoundException("Added user not found");
+        }
+    
+        return getSingleValuedAttr(user, INUM_ATTR);
+    }
+
+    public Map<String, String> getUserEntityByInum(String inum) {
+        User user = getUser(INUM_ATTR, inum);
+        boolean local = user != null;
+        LogUtils.log("There is % local account for %", local ? "a" : "no", inum);
+
+        if (local) {
+            String email = getSingleValuedAttr(user, MAIL);
+            //String inum = getSingleValuedAttr(user, INUM_ATTR);
+            String name = getSingleValuedAttr(user, GIVEN_NAME);
+            String uid = getSingleValuedAttr(user, UID); // Define uid properly
+            String displayName = getSingleValuedAttr(user, DISPLAY_NAME);
+            String givenName = getSingleValuedAttr(user, GIVEN_NAME);
+            String sn = getSingleValuedAttr(user, LAST_NAME);
+            String userPassword = getSingleValuedAttr(user, PASSWORD);
+
+            if (name == null) {
+                name = getSingleValuedAttr(user, DISPLAY_NAME);
+                if (name == null && email != null && email.contains("@")) {
+                    name = email.substring(0, email.indexOf("@"));
+                }
+            }
+            // Creating a modifiable HashMap directly
+            Map<String, String> userMap = new HashMap<>();
+            userMap.put(UID, uid);
+            userMap.put(INUM_ATTR, inum);
+            userMap.put("name", name);
+            userMap.put("email", email);
+            userMap.put(DISPLAY_NAME, displayName);
+            userMap.put(LAST_NAME, sn);
+            userMap.put(PASSWORD, userPassword);
+
+            return userMap;
+        }
+
+        return new HashMap<>();
+    }
+
     private String getSingleValuedAttr(User user, String attribute) {
         Object value = null;
         if (attribute.equals(UID)) {
@@ -152,9 +216,9 @@ public class JansUserRegistration extends UserRegistration {
 
     }
 
-    private static User getUser(String attributeName, String value) {
+    private User getUser(String attributeName, String value) {
         UserService userService = CdiUtil.bean(UserService.class);
         return userService.getUserByAttribute(attributeName, value, true);
-    }    
+    }
 }
 
