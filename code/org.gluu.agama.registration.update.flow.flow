@@ -1,0 +1,70 @@
+// Â UserÂ RegistrationÂ Techniques
+Flow org.gluu.agama.registration.update.flow
+     Basepath ""
+     Timeout 360 seconds
+// Â CreateÂ Â variableÂ forÂ UIÂ feedback
+uiFeedback = {}
+// Â IterateÂ xÂ timesÂ max
+Repeat 6 times max
+     // Â RetrieveÂ userÂ profileÂ Â fromÂ UI
+     userInput = RRF "profile.ftlh" uiFeedback
+     // Â createÂ anÂ instanceÂ ofÂ RegistrationÂ service
+     userRegistrationService = Call org.gluu.agama.user.UserRegistration#getInstance 
+     // Â AssignÂ userName,Â emailÂ andÂ passwordÂ Â toÂ aÂ variable
+     email = userInput.mail
+     userName = userInput.uid
+     userPassword = userInput.userPassword
+     // Â CheckÂ userÂ nameÂ policy
+     isUsernamePolicyMatch = Call userRegistrationService usernamePolicyMatch userName
+     // Â ifÂ usernameÂ policyÂ match
+     When isUsernamePolicyMatch is true
+          // Â PasswordÂ policyÂ check
+          isPasswordPolicyMatch = Call userRegistrationService passwordPolicyMatch userPassword
+          // Â ifÂ passwordÂ policyÂ match
+          When isPasswordPolicyMatch is true
+               // Â MatchingÂ password
+               When userInput.userPassword is userInput.confirmPassword
+                    // Â CheckÂ userÂ alreadyÂ existÂ orÂ notÂ withÂ mail
+                    user = Call userRegistrationService getUserEntityByMail email
+                    // Â IfÂ userÂ notÂ found
+                    When user.empty is true
+                         // Â CheckÂ userÂ alreadyÂ existÂ orÂ notÂ withÂ username
+                         userWithUid = Call userRegistrationService getUserEntityByUsername userName
+                         // Â userÂ notÂ found
+                         When userWithUid.empty is true
+                              // Â CallÂ userÂ registrationÂ serviceÂ methodÂ toÂ registerÂ aÂ newÂ user
+                              inum = Call = Call userRegistrationService addNewUser userInput
+                              // Â IfÂ userÂ registrationÂ success
+                              When inum is not null
+                                   // Â ShowÂ userÂ creationÂ log
+                                   Log "@info UserÂ %Â hasÂ beenÂ created"Â inum
+                                   // Â ShowÂ acknowledgementÂ UIÂ pageÂ forÂ successfulÂ registration
+                                   acknowledgementInput = RRF "acknowledgement.ftlh" 
+                                   // Â FinishÂ theÂ flowÂ successfully
+                                   Log "@info FinishÂ theÂ flowÂ successfully"
+                                   // Â FinishÂ theÂ flowÂ successfully
+                                   Finish userName
+                              // Â RegistrationÂ failedÂ log
+                              Log "@info UserÂ registrationÂ failed.Â ErrorÂ :Â %"Â E
+                         Otherwise
+                              // Â UserÂ alreadyÂ registeredÂ withÂ UID
+                              Log "@info UserÂ alreadyÂ registeredÂ withÂ uid:Â %"Â userName
+                              // Â UserÂ alreadyÂ registeredÂ withÂ UID
+                              uiFeedback.errorMessage = UserÂ alreadyÂ registeredÂ withÂ thisÂ UserName
+                    Otherwise
+                         // Â UserÂ alreadyÂ registeredÂ withÂ mail
+                         Log "@info UserÂ alreadyÂ registeredÂ withÂ mail:Â %"Â email
+                         // Â UserÂ alreadyÂ Registered
+                         uiFeedback.errorMessage = UserÂ alreadyÂ RegisteredÂ withÂ thisÂ mail
+               Otherwise
+                    // Â PasswordÂ andÂ ConfirmÂ passwordÂ doesn'tÂ match
+                    Log "@trace PasswordÂ andÂ ConfirmÂ passwordÂ doesn'tÂ match"
+                    // Â ErrorÂ variableÂ assignment
+                    uiFeedback.errorMessage = PasswordÂ andÂ confirmÂ passwordÂ notÂ matching
+                    uiFeedback.errorMessage = PasswordÂ mustÂ beÂ atÂ leastÂ 6Â charactersÂ longÂ andÂ containÂ atÂ leastÂ oneÂ specialÂ character
+                    uiFeedback.errorMessage = NameÂ shouldÂ containÂ onlyÂ alphabets
+// Â MaximumÂ attemptÂ reached
+Log "@info MaximumÂ attemptÂ reached"
+// Â UserÂ RegistrationÂ flowÂ failed
+it_rznxv = {success:false, error: ""UserÂ registrationÂ flowÂ reachedÂ maxÂ attemptsÂ tryÂ later""}
+Finish it_rznxv
