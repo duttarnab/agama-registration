@@ -147,16 +147,17 @@ public class JansUserRegistration extends UserRegistration {
     } 
 
     public String updateUser(Map<String, String> profile) throws Exception {
-        Set<String> attributes = Set.of("uid", "mail", "displayName","givenName", "sn", "userPassword");
+        Set<String> attributes = Set.of("uid", "mail", "displayName","givenName", "sn");
         User user = getUser(INUM_ATTR,  profile.get(INUM_ATTR));
     
         attributes.forEach(attr -> {
             String val = profile.get(attr);
+            LogUtils.log("******** attr: % , val: %", attr, val);
             if (StringHelper.isNotEmpty(val)) {
                 user.setAttribute(attr, val);      
             }
         });
-
+        user.setUserId(profile.get(UID));
         UserService userService = CdiUtil.bean(UserService.class);
         user = userService.updateUser(user); // Set user status active
     
