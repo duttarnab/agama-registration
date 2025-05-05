@@ -16,7 +16,8 @@
     "noDirectLaunch": [],
     "configs": {
         "": {},
-        "org.gluu.agama.registration.update.flow": {}
+        "org.gluu.agama.registration.update.flow": {},
+        "org.gluu.agama.registration.update": {}
     },
     "name": "agama-registration"
 }
